@@ -37,15 +37,15 @@ Here's the [code](https://github.com/gustavo-alvarenga/Twitch/blob/main/%232%20P
 
 ## Step #3: Data Visualization
 
-While there could be other intermediary steps, I chose to create a Power BI report to showcase the data. Since GitHub won't accept iframes, I won't be able to link the actual report here but will provide a screenshot along with a link to my portfolio.
+While there could be other intermediary steps, I chose to create a Power BI report to showcase the data. Since GitHub won't accept iframes, I won't be able to link the actual report here but will provide a screenshot along with a link to my [portfolio](https://www.ggsanalytics.com/homepage/).
 
 All the below reports are samples of what can be created from the data retrieved as described above.
 
-### Creator PoV Report
-![Creator PoV - Power BI Report](https://www.ggsanalytics.com/wp-content/uploads/2024/04/dashboard-image.png)
+### Creator PoV [Report](https://www.ggsanalytics.com/dashboards-free/)
+[![Creator PoV - Power BI Report](https://www.ggsanalytics.com/wp-content/uploads/2024/04/dashboard-image.png)](https://www.ggsanalytics.com/dashboards-free/)
 
-### Game PoV Report (gif)
-![Recording GIF](https://www.ggsanalytics.com/wp-content/uploads/2024/05/Recording2024-05-13173035-ezgif.com-video-to-gif-converter.gif)
+### Game PoV [Report](https://www.ggsanalytics.com/dashboards-free/) (gif)
+[![Recording GIF](https://www.ggsanalytics.com/wp-content/uploads/2024/05/Recording2024-05-13173035-ezgif.com-video-to-gif-converter.gif)](https://www.ggsanalytics.com/dashboards-free/)
 
 ## That's all, folks!
 
