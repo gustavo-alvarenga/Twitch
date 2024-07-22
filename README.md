@@ -8,6 +8,7 @@ TL;DR: This repository will provide code to retrieve data from Twitch to gain in
   - Virtual Machines
   - BigQuery
   - Secret Manager
+- Power BI
  
 
 ## Step #1: Retrieve streams from Twitch
@@ -34,7 +35,20 @@ Here's the [code](https://github.com/gustavo-alvarenga/Twitch/blob/main/%232%20P
 - Upload to the permanent table
 - Delete data from the temporary table
 
+## Step #3: Data Visualization
+
+While there could be other intermediary steps, I chose to create a Power BI report to showcase the data. Since GitHub won't accept iframes, I won't be able to link the actual report here but will provide a screenshot along with a link to my portfolio.
+
+All the below reports are samples of what can be created from the data retrieved as described above.
+
+### Creator PoV Report
+![Creator PoV - Power BI Report](https://www.ggsanalytics.com/wp-content/uploads/2024/04/dashboard-image.png)
+
+### Game PoV Report (gif)
+![Recording GIF](https://www.ggsanalytics.com/wp-content/uploads/2024/05/Recording2024-05-13173035-ezgif.com-video-to-gif-converter.gif)
+
 ## That's all, folks!
 
 If you have any questions, reach out to me on [LinkedIn](https://www.linkedin.com/in/gustavo-alvarenga/)
+
 
