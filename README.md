@@ -1,54 +1,83 @@
 # Twitch - Data Analytics
 
-TL;DR: This repository will provide code to retrieve data from Twitch to gain insights as granular as which game was played by which streamer, for how many seconds, on which day, and the average viewers and hours watched.
+This repository walks through the step-by-step process of retrieving raw Twitch stream data and transforming it into fully developed metrics.
 
-### Tools & Tech used:
-- Python
-- Google Cloud Platform
-  - Virtual Machines
-  - BigQuery
-  - Secret Manager
-- Power BI
- 
+**TL;DR:** Twitch provides a snapshot of all currently live streams, including stream metadata and current viewer counts, and that's it.  
+Using this limited data, we can derive metrics as granular as how many hours a game was played, how it ranked among others, or how well a streamer is performing compared to their peers.
 
-## Step #1: Retrieve streams from Twitch
+### Raw Data
+![Twitch](https://github.com/gustavo-alvarenga/About-me/blob/main/Twitch%20Streams.png)
 
-First, we need to retrieve stream data from Twitch. If you are unfamiliar with the [Get Streams](https://dev.twitch.tv/docs/api/reference/#get-streams) endpoint, it retrieves a list of all streams that are live at any specific moment. To be as granular as possible, we need to have a virtual instance running at all times. For better results, you can set up multiple instances to reduce the interval between updates.
+### Final Result (Click to view the interactive [dashboard](https://app.powerbi.com/view?r=eyJrIjoiZWI2Y2M2MTgtMDYzZS00ZjBlLTlhMzAtNmJiZmVhMzdjMTBmIiwidCI6ImI1NzZhZTMzLWM3MzAtNDk5Ny1iZWY3LTQxODkxMjQzZGJkZSJ9))
+![Twitch](https://github.com/gustavo-alvarenga/About-me/blob/main/Twitch%20Streams%20Dashboard.png)
 
-In this setup, I chose to store the temporary data (as we're going to process this data later) in BigQuery, though it could be stored in Data Lakes as well.
+### Tools & Tech Used:
+* Python
+* Google Cloud Platform  
+  * Compute Engine  
+  * BigQuery  
+  * Secret Manager
+* Microsoft Fabric  
+  * Dataflows  
+  * Power BI
+* Power Platform  
+  * Power Automate
 
-Here's the [code](https://github.com/gustavo-alvarenga/Twitch/blob/main/%231%20Twitch%20Streams.py). Here are a few assumptions:
-- You already have a Twitch application (Client ID and Secret). If not, create one here.
-- You are using GCP's Secret Manager to store secrets. If not, make the necessary adjustments.
-- You are using GCP's BigQuery to store data.
-- The created temporary table (PROJECT_ID.twitch_temp.livestreams) is partitioned by started_at. While this isn't mandatory, it will require further adjustment in the query statements in the processing code below.
+## Step #1: Retrieve Streams from Twitch
+
+First, we need to retrieve stream data from Twitch. If you're unfamiliar with the [Get Streams](https://dev.twitch.tv/docs/api/reference/#get-streams) endpoint, it returns a list of all live streams at the time of the request.
+
+To achieve granular tracking, you'll need a virtual machine running continuously. For better coverage, you can deploy multiple instances to reduce the interval between data points.
+
+Set up a virtual machine in GCP. I won't go into full detail here, but you'll need to:
+* Update and upgrade the system packages
+* Install Python in a virtual environment
+* Install the required libraries
+
+Optional, but recommended:
+* Set up a log file and direct script output to it
+* Create a service file to manage restarts, limit memory usage, etc.
+
+In this setup, temporary data is stored in BigQuery (to be processed later).
+
+Here’s the [code](https://github.com/gustavo-alvarenga/Twitch/blob/main/%231%20Twitch%20Streams.py).  
+The script does the following:
+* Retrieves data from Twitch and inserts it into a temporary BigQuery table continuously
+* Manages credential refresh and standardizes data format for consistency
+
+Assumptions:
+* You have a Twitch application (Client ID and Secret)
+* You're using GCP Secret Manager to store secrets (adjust accordingly if not)
+* You're storing data in GCP BigQuery
+* You've already created a temporary table at `PROJECT_ID.twitch_temp.livestreams`, partitioned by `started_at`. Partitioning by `started_at` is strongly recommended. If you skip it, you'll need to update the query logic in the next step
+
+The above code runs in the virtual machine you just created
 
 ## Step #2: Process Data
 
-Because the data can become too granular, we need to consolidate it to be as detailed as needed without significantly increasing storage/querying costs. Here are the consolidation "rules":
-- Each row will identify a game played in a stream. This row contains information about the game played, how many seconds were streamed, and how many seconds were watched by the viewers, plus information regarding the stream and streamer.
-- Each stream will contain at least one row per game played. If the streamer played game A, then B, and then C, that stream will contain 3 rows. If the streamer played game A, then B, then back to A, the stream will also contain 3 rows.
+The temporary table will grow quickly, and we're talking a few TiB per month. To manage that, we need to aggregate the data efficiently. You can aggregate by game, streamer, or both. For simplicity, we'll focus on aggregation by game.
 
-Here's the [code](https://github.com/gustavo-alvarenga/Twitch/blob/main/%232%20Processing%20Data). The workflow of this process is as follows:
-- Query data from the Step #1 temporary table
-- Process data as described above
-- Upload to the permanent table
-- Delete data from the temporary table
+Since raw data can be extremely granular, the goal is to retain detail without incurring high storage or query costs.
+
+In this example, I use a second virtual machine to run the processing script. This is mainly for demonstration purposes. In production, a scheduled query in BigQuery would be more efficient.
+
+After setting up a second VM (same steps as above), run this [code](https://github.com/gustavo-alvarenga/Twitch/blob/main/%232%20Processing%20Data).
+
+Process Workflow:
+* Query data from the temporary table
+* Process and aggregate it as described
+* Upload results to a permanent table
+* Delete processed data from the temporary table to reduce storage costs
 
 ## Step #3: Data Visualization
 
-While there could be other intermediary steps, I chose to create a Power BI report to showcase the data. Since GitHub won't accept iframes, I won't be able to link the actual report here but will provide a screenshot along with a link to my [portfolio](https://www.ggsanalytics.com/homepage/).
+Here, I use Microsoft Fabric Dataflows to pull data from BigQuery on a daily schedule. This allows for greater flexibility when managing and modifying Power BI models that rely on the same dataset.
 
-All the below reports are samples of what can be created from the data retrieved as described above.
+I won't dive into the full setup, but to create the dataflow, log into the Power BI Service and configure it to fit your needs.
 
-### Creator PoV [Report](https://www.ggsanalytics.com/dashboards-free/)
-[![Creator PoV - Power BI Report](https://www.ggsanalytics.com/wp-content/uploads/2024/04/dashboard-image.png)](https://www.ggsanalytics.com/dashboards-free/)
+You can also use Power Automate to build [automated cloud flows](https://make.powerautomate.com/) for better control over refresh schedules and dataflow triggers.
 
-### Game PoV [Report](https://www.ggsanalytics.com/dashboards-free/) (gif)
-[![Recording GIF](https://www.ggsanalytics.com/wp-content/uploads/2024/05/Recording2024-05-13173035-ezgif.com-video-to-gif-converter.gif)](https://www.ggsanalytics.com/dashboards-free/)
+Finally, here's an example [dashboard](https://app.powerbi.com/view?r=eyJrIjoiZWI2Y2M2MTgtMDYzZS00ZjBlLTlhMzAtNmJiZmVhMzdjMTBmIiwidCI6ImI1NzZhZTMzLWM3MzAtNDk5Ny1iZWY3LTQxODkxMjQzZGJkZSJ9) that can be built from this dataset:  
+![Twitch](https://github.com/gustavo-alvarenga/About-me/blob/main/Twitch%20Streams%20Dashboard.png)
 
-## That's all, folks!
-
-If you have any questions, reach out to me on [LinkedIn](https://www.linkedin.com/in/gustavo-alvarenga/)
-
-
+You can reach out to me on [LinkedIn](https://www.linkedin.com/in/gustavo-alvarenga/)
