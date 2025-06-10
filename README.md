@@ -61,7 +61,7 @@ Since raw data can be extremely granular, the goal is to retain detail without i
 
 In this example, I use a second virtual machine to run the processing script. This is mainly for demonstration purposes. In production, a scheduled query in BigQuery would be more efficient.
 
-After setting up a second VM (same steps as above), run this [code](https://github.com/gustavo-alvarenga/Twitch/blob/main/%232%20Processing%20Data).
+After setting up a second VM (same steps as above), run this [code]([https://github.com/gustavo-alvarenga/Twitch/blob/main/%232%20Processing%20Data.py).
 
 Process Workflow:
 * Query data from the temporary table
