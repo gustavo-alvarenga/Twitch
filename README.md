@@ -2,7 +2,7 @@
 
 This repository walks through the process of creating an end-to-end project that retrieves raw Twitch stream data and transforms it into fully developed metrics.
 
-**TL;DR:** Twitch provides a snapshot of all currently live streams, including stream metadata and current viewer counts, and that's it.  
+**TL;DR:** Twitch provides a snapshot of all current live streams, including stream metadata and current viewer counts, and that's it.  
 Using this limited data, we can derive metrics as granular as how many hours a game was played, how it ranked among others, or how well a streamer is performing compared to their peers.
 
 ### Raw Data
